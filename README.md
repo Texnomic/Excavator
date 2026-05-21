@@ -47,7 +47,7 @@ public sealed class BlockExcavator(IOptions<ExcavatorOptions> Options, ILogger L
 }
 ```
 
-Register it like any other `IHostedService`, and bind `ExcavatorOptions` from config or in code:
+Register it with the `AddExcavator<TExcavator>` extension method — a one-liner that wires both the hosted service and its `ExcavatorOptions`:
 
 ```csharp
 var Builder = Host.CreateApplicationBuilder(args);
@@ -56,11 +56,11 @@ Builder.Services.AddSerilog((Services, Configuration) => Configuration
     .ReadFrom.Configuration(Builder.Configuration)
     .Enrich.FromLogContext());
 
-// Bind from configuration...
-Builder.Services.Configure<ExcavatorOptions>(Builder.Configuration.GetSection("Excavator"));
+// Defaults — equivalent to `new ExcavatorOptions()`
+Builder.Services.AddExcavator<BlockExcavator>();
 
-// ...or programmatically:
-Builder.Services.Configure<ExcavatorOptions>(Options =>
+// ...or override the defaults with an Action<ExcavatorOptions>:
+Builder.Services.AddExcavator<BlockExcavator>(Options =>
 {
     Options.TransformerQueueCapacity         = 500;
     Options.LoaderQueueCapacity              = 500;
@@ -69,10 +69,21 @@ Builder.Services.Configure<ExcavatorOptions>(Options =>
     Options.ReporterInterval                  = TimeSpan.FromSeconds(30);
 });
 
-Builder.Services.AddHostedService<BlockExcavator>();
-
 await Builder.Build().RunAsync();
 ```
+
+When your excavator uses a derived options type, pass it as the second generic argument:
+
+```csharp
+Builder.Services.AddExcavator<BlockExcavator, BlockExcavatorOptions>(Options =>
+{
+    Options.Network                   = "mainnet";
+    Options.BatchSize                 = 100;
+    Options.TransformerQueueCapacity  = 500;   // inherited from ExcavatorOptions
+});
+```
+
+To bind from configuration instead, call `Services.Configure<TExcavatorOptions>(Configuration.GetSection("..."))` first, then `AddExcavator<TExcavator>()` with no configure delegate.
 
 ### Options reference
 

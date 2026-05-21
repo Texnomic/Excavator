@@ -340,7 +340,11 @@
     .<span class="tok-v">ReadFrom</span>.<span class="tok-m">Configuration</span>(<span class="tok-v">Builder</span>.<span class="tok-v">Configuration</span>)
     .<span class="tok-v">Enrich</span>.<span class="tok-m">FromLogContext</span>());
 
-<span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">Configure</span>&lt;<span class="tok-t">ExcavatorOptions</span>&gt;(<span class="tok-v">Options</span> =&gt;
+<span class="tok-c">// Defaults — equivalent to new ExcavatorOptions()</span>
+<span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddExcavator</span>&lt;<span class="tok-t">BlockExcavator</span>&gt;();
+
+<span class="tok-c">// ...or override the defaults:</span>
+<span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddExcavator</span>&lt;<span class="tok-t">BlockExcavator</span>&gt;(<span class="tok-v">Options</span> =&gt;
 {
     <span class="tok-v">Options</span>.<span class="tok-v">TransformerQueueCapacity</span>          = <span class="tok-l">500</span>;
     <span class="tok-v">Options</span>.<span class="tok-v">LoaderQueueCapacity</span>               = <span class="tok-l">500</span>;
@@ -348,8 +352,6 @@
     <span class="tok-v">Options</span>.<span class="tok-v">LoaderMaxDegreeOfParallelism</span>      = <span class="tok-l">8</span>;
     <span class="tok-v">Options</span>.<span class="tok-v">ReporterInterval</span>                  = <span class="tok-t">TimeSpan</span>.<span class="tok-m">FromSeconds</span>(<span class="tok-l">30</span>);
 });
-
-<span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddHostedService</span>&lt;<span class="tok-t">BlockExcavator</span>&gt;();
 
 <span class="tok-k">await</span> <span class="tok-v">Builder</span>.<span class="tok-m">Build</span>().<span class="tok-m">RunAsync</span>();</code></pre>
                         </div>
@@ -380,6 +382,21 @@
         <span class="tok-k">await</span> <span class="tok-v">TransformerQueue</span>.<span class="tok-v">Writer</span>.<span class="tok-m">WriteAsync</span>(<span class="tok-v">Raw</span>, <span class="tok-v">Token</span>);
     }
 }</code></pre>
+                        </div>
+                        <p class="step__desc" style="margin-top: 1.5rem;">Register it with the two-generic <code class="inline-code">AddExcavator&lt;TExcavator, TExcavatorOptions&gt;</code> overload so DI resolves <code class="inline-code">IOptions&lt;BlockExcavatorOptions&gt;</code> for the constructor.</p>
+                        <div class="code-window">
+                            <div class="code-window__tabs">
+                                <span class="code-window__tab code-window__tab--active">Program.cs</span>
+                            </div>
+<pre class="code-window__body"><code><span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddExcavator</span>&lt;<span class="tok-t">BlockExcavator</span>, <span class="tok-t">BlockExcavatorOptions</span>&gt;(<span class="tok-v">Options</span> =&gt;
+{
+    <span class="tok-v">Options</span>.<span class="tok-v">Network</span>                   = <span class="tok-s">"mainnet"</span>;
+    <span class="tok-v">Options</span>.<span class="tok-v">BatchSize</span>                 = <span class="tok-l">100</span>;
+    <span class="tok-v">Options</span>.<span class="tok-v">TransformerQueueCapacity</span>  = <span class="tok-l">500</span>;   <span class="tok-c">// inherited from ExcavatorOptions</span>
+});
+
+<span class="tok-c">// Or, if defaults are fine:</span>
+<span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddExcavator</span>&lt;<span class="tok-t">BlockExcavator</span>, <span class="tok-t">BlockExcavatorOptions</span>&gt;();</code></pre>
                         </div>
                     </div>
                 </div>

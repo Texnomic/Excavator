@@ -1,16 +1,15 @@
-﻿namespace Texnomic.Excavator;
+namespace Texnomic.Excavator;
 
 public abstract class Excavator<TTransformer, TLoader, TExcavatorOptions>(
     string ExcavatorName,
-    IOptions<TExcavatorOptions> OptionsAccessor,
+    IOptions<TExcavatorOptions> Options,
     ILogger Logger) : IHostedService
     where TExcavatorOptions : ExcavatorOptions
 {
     private readonly Dictionary<string, Task> Threads = [];
     private readonly CancellationTokenSource CancellationTokenSource = new();
-    protected readonly TExcavatorOptions Options = OptionsAccessor.Value;
-    protected readonly Channel<TTransformer> TransformerQueue = Channel.CreateBounded<TTransformer>(OptionsAccessor.Value.TransformerQueueCapacity);
-    protected readonly Channel<TLoader> LoaderQueue = Channel.CreateBounded<TLoader>(OptionsAccessor.Value.LoaderQueueCapacity);
+    private readonly Channel<TTransformer> TransformerQueue = Channel.CreateBounded<TTransformer>(Options.Value.TransformerQueueCapacity);
+    private readonly Channel<TLoader> LoaderQueue = Channel.CreateBounded<TLoader>(Options.Value.LoaderQueueCapacity);
 
     public virtual async Task StartAsync(CancellationToken CancellationToken)
     {
@@ -141,7 +140,7 @@ public abstract class Excavator<TTransformer, TLoader, TExcavatorOptions>(
             var ParallelOptions = new ParallelOptions()
             {
                 CancellationToken = CancellationToken,
-                MaxDegreeOfParallelism = Options.TransformerMaxDegreeOfParallelism
+                MaxDegreeOfParallelism = Options.Value.TransformerMaxDegreeOfParallelism
             };
 
             await Parallel.ForEachAsync(TransformerQueue.Reader.ReadAllAsync(CancellationToken), ParallelOptions, TransformerCore);
@@ -175,7 +174,7 @@ public abstract class Excavator<TTransformer, TLoader, TExcavatorOptions>(
             var ParallelOptions = new ParallelOptions()
             {
                 CancellationToken = CancellationToken,
-                MaxDegreeOfParallelism = Options.LoaderMaxDegreeOfParallelism
+                MaxDegreeOfParallelism = Options.Value.LoaderMaxDegreeOfParallelism
             };
 
             await Parallel.ForEachAsync(LoaderQueue.Reader.ReadAllAsync(CancellationToken), ParallelOptions, LoaderCore);
@@ -206,15 +205,13 @@ public abstract class Excavator<TTransformer, TLoader, TExcavatorOptions>(
         {
             Logger.Information("[{System}] [{Function}] Started.", ExcavatorName, nameof(Reporter));
 
-            var Delay = Options.ReporterInterval;
-
-            await Task.Delay(Delay, CancellationToken);
+            await Task.Delay(Options.Value.ReporterInterval, CancellationToken);
 
             while (CancellationToken.IsCancellationRequested is false)
             {
                 await ReporterCore();
 
-                await Task.Delay(Delay, CancellationToken);
+                await Task.Delay(Options.Value.ReporterInterval, CancellationToken);
             }
 
             Logger.Information("[{System}] [{Function}] Stopped.", ExcavatorName, nameof(Reporter));
@@ -243,20 +240,10 @@ public abstract class Excavator<TTransformer, TLoader, TExcavatorOptions>(
             $"{TransformerQueue.Reader.Count:N0}",
             $"{LoaderQueue.Reader.Count:N0}");
     }
-
-    private async Task Worker<T>(ChannelReader<T> ChannelReader, Func<T, CancellationToken, ValueTask> Function, CancellationToken CancellationToken)
-    {
-        while (CancellationToken.IsCancellationRequested is false)
-        {
-            var Item = await ChannelReader.ReadAsync(CancellationToken);
-
-            await Function(Item, CancellationToken);
-        }
-    }
 }
 
 public abstract class Excavator<TTransformer, TLoader>(
     string ExcavatorName,
-    IOptions<ExcavatorOptions> OptionsAccessor,
+    IOptions<ExcavatorOptions> Options,
     ILogger Logger)
-    : Excavator<TTransformer, TLoader, ExcavatorOptions>(ExcavatorName, OptionsAccessor, Logger);
+    : Excavator<TTransformer, TLoader, ExcavatorOptions>(ExcavatorName, Options, Logger);
