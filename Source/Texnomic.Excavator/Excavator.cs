@@ -1,13 +1,14 @@
 ﻿namespace Texnomic.Excavator;
 
-public abstract class Excavator<TTransformer, TLoader>(
+public abstract class Excavator<TTransformer, TLoader, TExcavatorOptions>(
     string ExcavatorName,
-    IOptions<ExcavatorOptions> OptionsAccessor,
+    IOptions<TExcavatorOptions> OptionsAccessor,
     ILogger Logger) : IHostedService
+    where TExcavatorOptions : ExcavatorOptions
 {
     private readonly Dictionary<string, Task> Threads = [];
     private readonly CancellationTokenSource CancellationTokenSource = new();
-    protected readonly ExcavatorOptions Options = OptionsAccessor.Value;
+    protected readonly TExcavatorOptions Options = OptionsAccessor.Value;
     protected readonly Channel<TTransformer> TransformerQueue = Channel.CreateBounded<TTransformer>(OptionsAccessor.Value.TransformerQueueCapacity);
     protected readonly Channel<TLoader> LoaderQueue = Channel.CreateBounded<TLoader>(OptionsAccessor.Value.LoaderQueueCapacity);
 
@@ -248,8 +249,14 @@ public abstract class Excavator<TTransformer, TLoader>(
         while (CancellationToken.IsCancellationRequested is false)
         {
             var Item = await ChannelReader.ReadAsync(CancellationToken);
-            
+
             await Function(Item, CancellationToken);
         }
     }
 }
+
+public abstract class Excavator<TTransformer, TLoader>(
+    string ExcavatorName,
+    IOptions<ExcavatorOptions> OptionsAccessor,
+    ILogger Logger)
+    : Excavator<TTransformer, TLoader, ExcavatorOptions>(ExcavatorName, OptionsAccessor, Logger);

@@ -355,6 +355,34 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="step">
+                    <div class="step__index">04</div>
+                    <div class="step__body">
+                        <h3 class="step__title">Extend the options (optional)</h3>
+                        <p class="step__desc">Need your own knobs — connection strings, batch sizes, feature flags? Inherit <code class="inline-code">ExcavatorOptions</code> and close the open generic over your derived type. <code class="inline-code">Options</code> on the base class is typed as your derived options.</p>
+                        <div class="code-window">
+                            <div class="code-window__tabs">
+                                <span class="code-window__tab code-window__tab--active">C#</span>
+                            </div>
+<pre class="code-window__body"><code><span class="tok-k">public sealed class</span> <span class="tok-t">BlockExcavatorOptions</span> : <span class="tok-t">ExcavatorOptions</span>
+{
+    <span class="tok-k">public string</span> <span class="tok-v">Network</span>   { <span class="tok-k">get</span>; <span class="tok-k">set</span>; } = <span class="tok-s">"mainnet"</span>;
+    <span class="tok-k">public int</span>    <span class="tok-v">BatchSize</span> { <span class="tok-k">get</span>; <span class="tok-k">set</span>; } = <span class="tok-l">100</span>;
+}
+
+<span class="tok-k">public sealed class</span> <span class="tok-t">BlockExcavator</span>(<span class="tok-t">IOptions</span>&lt;<span class="tok-t">BlockExcavatorOptions</span>&gt; <span class="tok-v">Options</span>, <span class="tok-t">ILogger</span> <span class="tok-v">Logger</span>)
+    : <span class="tok-t">Excavator</span>&lt;<span class="tok-t">RawBlock</span>, <span class="tok-t">NormalizedBlock</span>, <span class="tok-t">BlockExcavatorOptions</span>&gt;(<span class="tok-s">"Blocks"</span>, <span class="tok-v">Options</span>, <span class="tok-v">Logger</span>)
+{
+    <span class="tok-k">protected override async</span> <span class="tok-t">ValueTask</span> <span class="tok-m">ExtractorCore</span>(<span class="tok-t">CancellationToken</span> <span class="tok-v">Token</span>)
+    {
+        <span class="tok-k">var</span> <span class="tok-v">Raw</span> = <span class="tok-k">await</span> <span class="tok-v">Source</span>.<span class="tok-m">NextBlockAsync</span>(<span class="tok-v">Options</span>.<span class="tok-v">Network</span>, <span class="tok-v">Options</span>.<span class="tok-v">BatchSize</span>, <span class="tok-v">Token</span>);
+        <span class="tok-k">await</span> <span class="tok-v">TransformerQueue</span>.<span class="tok-v">Writer</span>.<span class="tok-m">WriteAsync</span>(<span class="tok-v">Raw</span>, <span class="tok-v">Token</span>);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

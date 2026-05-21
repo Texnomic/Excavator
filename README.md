@@ -84,6 +84,36 @@ await Builder.Build().RunAsync();
 | `LoaderMaxDegreeOfParallelism`      | `Environment.ProcessorCount`  | Parallel partitions reading from `LoaderQueue`.                     |
 | `ReporterInterval`                  | `00:01:00`                    | Tick interval for the queue-depth Reporter log line.                |
 
+### Extending ExcavatorOptions
+
+`ExcavatorOptions` is an inheritable base. When your pipeline needs its own knobs — connection strings, batch sizes, feature flags — inherit it and close the open generic over your derived options type via `Excavator<TTransformer, TLoader, TExcavatorOptions>`:
+
+```csharp
+public sealed class BlockExcavatorOptions : ExcavatorOptions
+{
+    public string Network    { get; set; } = "mainnet";
+    public int    BatchSize  { get; set; } = 100;
+}
+
+public sealed class BlockExcavator(IOptions<BlockExcavatorOptions> Options, ILogger Logger)
+    : Excavator<RawBlock, NormalizedBlock, BlockExcavatorOptions>("Blocks", Options, Logger)
+{
+    protected override async ValueTask ExtractorCore(CancellationToken CancellationToken)
+    {
+        var Raw = await Source.NextBlockAsync(Options.Network, Options.BatchSize, CancellationToken);
+        await TransformerQueue.Writer.WriteAsync(Raw, CancellationToken);
+    }
+}
+```
+
+`Options` is typed as your derived class, so you get both the inherited pipeline tuning (`TransformerQueueCapacity`, `MaxDegreeOfParallelism`, `ReporterInterval`) and your own properties on a single object. Register the derived options the same way:
+
+```csharp
+Builder.Services.Configure<BlockExcavatorOptions>(Builder.Configuration.GetSection("Blocks"));
+```
+
+The two-arg `Excavator<TTransformer, TLoader>` shown earlier is just a convenience that closes the third generic over plain `ExcavatorOptions` — pick whichever fits.
+
 ## How it works
 
 ```

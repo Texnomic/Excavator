@@ -1,6 +1,6 @@
 namespace Texnomic.Excavator;
 
-public sealed class ExcavatorOptions
+public class ExcavatorOptions
 {
     public int TransformerQueueCapacity { get; set; } = 100;
 
