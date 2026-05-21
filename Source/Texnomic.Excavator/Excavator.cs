@@ -1,11 +1,15 @@
 ﻿namespace Texnomic.Excavator;
 
-public abstract class Excavator<TTransformer, TLoader>(string ExcavatorName, ILogger Logger) : IHostedService
+public abstract class Excavator<TTransformer, TLoader>(
+    string ExcavatorName,
+    IOptions<ExcavatorOptions> OptionsAccessor,
+    ILogger Logger) : IHostedService
 {
     private readonly Dictionary<string, Task> Threads = [];
     private readonly CancellationTokenSource CancellationTokenSource = new();
-    protected readonly Channel<TTransformer> TransformerQueue = Channel.CreateBounded<TTransformer>(100);
-    protected readonly Channel<TLoader> LoaderQueue = Channel.CreateBounded<TLoader>(100);
+    protected readonly ExcavatorOptions Options = OptionsAccessor.Value;
+    protected readonly Channel<TTransformer> TransformerQueue = Channel.CreateBounded<TTransformer>(OptionsAccessor.Value.TransformerQueueCapacity);
+    protected readonly Channel<TLoader> LoaderQueue = Channel.CreateBounded<TLoader>(OptionsAccessor.Value.LoaderQueueCapacity);
 
     public virtual async Task StartAsync(CancellationToken CancellationToken)
     {
@@ -136,7 +140,7 @@ public abstract class Excavator<TTransformer, TLoader>(string ExcavatorName, ILo
             var ParallelOptions = new ParallelOptions()
             {
                 CancellationToken = CancellationToken,
-                MaxDegreeOfParallelism = Environment.ProcessorCount
+                MaxDegreeOfParallelism = Options.TransformerMaxDegreeOfParallelism
             };
 
             await Parallel.ForEachAsync(TransformerQueue.Reader.ReadAllAsync(CancellationToken), ParallelOptions, TransformerCore);
@@ -170,7 +174,7 @@ public abstract class Excavator<TTransformer, TLoader>(string ExcavatorName, ILo
             var ParallelOptions = new ParallelOptions()
             {
                 CancellationToken = CancellationToken,
-                MaxDegreeOfParallelism = Environment.ProcessorCount
+                MaxDegreeOfParallelism = Options.LoaderMaxDegreeOfParallelism
             };
 
             await Parallel.ForEachAsync(LoaderQueue.Reader.ReadAllAsync(CancellationToken), ParallelOptions, LoaderCore);
@@ -201,7 +205,7 @@ public abstract class Excavator<TTransformer, TLoader>(string ExcavatorName, ILo
         {
             Logger.Information("[{System}] [{Function}] Started.", ExcavatorName, nameof(Reporter));
 
-            var Delay = TimeSpan.FromMinutes(1);
+            var Delay = Options.ReporterInterval;
 
             await Task.Delay(Delay, CancellationToken);
 

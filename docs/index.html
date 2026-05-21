@@ -118,8 +118,8 @@
                     </div>
 <pre class="hero__code-body"><code><span class="tok-k">using</span> <span class="tok-n">Texnomic.Excavator</span>;
 
-<span class="tok-k">public sealed class</span> <span class="tok-t">BlockExcavator</span>(<span class="tok-t">ILogger</span> <span class="tok-v">Logger</span>)
-    : <span class="tok-t">Excavator</span>&lt;<span class="tok-t">RawBlock</span>, <span class="tok-t">NormalizedBlock</span>&gt;(<span class="tok-s">"Blocks"</span>, <span class="tok-v">Logger</span>)
+<span class="tok-k">public sealed class</span> <span class="tok-t">BlockExcavator</span>(<span class="tok-t">IOptions</span>&lt;<span class="tok-t">ExcavatorOptions</span>&gt; <span class="tok-v">Options</span>, <span class="tok-t">ILogger</span> <span class="tok-v">Logger</span>)
+    : <span class="tok-t">Excavator</span>&lt;<span class="tok-t">RawBlock</span>, <span class="tok-t">NormalizedBlock</span>&gt;(<span class="tok-s">"Blocks"</span>, <span class="tok-v">Options</span>, <span class="tok-v">Logger</span>)
 {
     <span class="tok-k">protected override async</span> <span class="tok-t">ValueTask</span> <span class="tok-m">ExtractorCore</span>(<span class="tok-t">CancellationToken</span> <span class="tok-v">Token</span>)
     {
@@ -300,8 +300,8 @@
                             </div>
 <pre class="code-window__body"><code><span class="tok-k">using</span> <span class="tok-n">Texnomic.Excavator</span>;
 
-<span class="tok-k">public sealed class</span> <span class="tok-t">BlockExcavator</span>(<span class="tok-t">ILogger</span> <span class="tok-v">Logger</span>)
-    : <span class="tok-t">Excavator</span>&lt;<span class="tok-t">RawBlock</span>, <span class="tok-t">NormalizedBlock</span>&gt;(<span class="tok-s">"Blocks"</span>, <span class="tok-v">Logger</span>)
+<span class="tok-k">public sealed class</span> <span class="tok-t">BlockExcavator</span>(<span class="tok-t">IOptions</span>&lt;<span class="tok-t">ExcavatorOptions</span>&gt; <span class="tok-v">Options</span>, <span class="tok-t">ILogger</span> <span class="tok-v">Logger</span>)
+    : <span class="tok-t">Excavator</span>&lt;<span class="tok-t">RawBlock</span>, <span class="tok-t">NormalizedBlock</span>&gt;(<span class="tok-s">"Blocks"</span>, <span class="tok-v">Options</span>, <span class="tok-v">Logger</span>)
 {
     <span class="tok-k">protected override</span> <span class="tok-t">ValueTask</span> <span class="tok-m">InitializerCore</span>(<span class="tok-t">CancellationToken</span> <span class="tok-v">Token</span>)
         =&gt; <span class="tok-t">ValueTask</span>.<span class="tok-v">CompletedTask</span>;
@@ -339,6 +339,15 @@
 <span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddSerilog</span>((<span class="tok-v">Services</span>, <span class="tok-v">Configuration</span>) =&gt; <span class="tok-v">Configuration</span>
     .<span class="tok-v">ReadFrom</span>.<span class="tok-m">Configuration</span>(<span class="tok-v">Builder</span>.<span class="tok-v">Configuration</span>)
     .<span class="tok-v">Enrich</span>.<span class="tok-m">FromLogContext</span>());
+
+<span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">Configure</span>&lt;<span class="tok-t">ExcavatorOptions</span>&gt;(<span class="tok-v">Options</span> =&gt;
+{
+    <span class="tok-v">Options</span>.<span class="tok-v">TransformerQueueCapacity</span>          = <span class="tok-l">500</span>;
+    <span class="tok-v">Options</span>.<span class="tok-v">LoaderQueueCapacity</span>               = <span class="tok-l">500</span>;
+    <span class="tok-v">Options</span>.<span class="tok-v">TransformerMaxDegreeOfParallelism</span> = <span class="tok-l">16</span>;
+    <span class="tok-v">Options</span>.<span class="tok-v">LoaderMaxDegreeOfParallelism</span>      = <span class="tok-l">8</span>;
+    <span class="tok-v">Options</span>.<span class="tok-v">ReporterInterval</span>                  = <span class="tok-t">TimeSpan</span>.<span class="tok-m">FromSeconds</span>(<span class="tok-l">30</span>);
+});
 
 <span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddHostedService</span>&lt;<span class="tok-t">BlockExcavator</span>&gt;();
 

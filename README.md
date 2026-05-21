@@ -18,10 +18,11 @@ dotnet add package Texnomic.Excavator
 Subclass `Excavator<TTransformer, TLoader>` and implement the four `*Core` hooks. The base class spins up four named worker loops — `Extractor`, `Transformer`, `Loader`, `Reporter` — each guarded by `OperationCanceledException` / `TaskCanceledException` handlers tied to the host's shutdown token.
 
 ```csharp
+using Microsoft.Extensions.Options;
 using Texnomic.Excavator;
 
-public sealed class BlockExcavator(ILogger Logger)
-    : Excavator<RawBlock, NormalizedBlock>("Blocks", Logger)
+public sealed class BlockExcavator(IOptions<ExcavatorOptions> Options, ILogger Logger)
+    : Excavator<RawBlock, NormalizedBlock>("Blocks", Options, Logger)
 {
     protected override ValueTask InitializerCore(CancellationToken CancellationToken)
     {
@@ -46,7 +47,7 @@ public sealed class BlockExcavator(ILogger Logger)
 }
 ```
 
-Register it like any other `IHostedService`:
+Register it like any other `IHostedService`, and bind `ExcavatorOptions` from config or in code:
 
 ```csharp
 var Builder = Host.CreateApplicationBuilder(args);
@@ -55,10 +56,33 @@ Builder.Services.AddSerilog((Services, Configuration) => Configuration
     .ReadFrom.Configuration(Builder.Configuration)
     .Enrich.FromLogContext());
 
+// Bind from configuration...
+Builder.Services.Configure<ExcavatorOptions>(Builder.Configuration.GetSection("Excavator"));
+
+// ...or programmatically:
+Builder.Services.Configure<ExcavatorOptions>(Options =>
+{
+    Options.TransformerQueueCapacity         = 500;
+    Options.LoaderQueueCapacity              = 500;
+    Options.TransformerMaxDegreeOfParallelism = 16;
+    Options.LoaderMaxDegreeOfParallelism      = 8;
+    Options.ReporterInterval                  = TimeSpan.FromSeconds(30);
+});
+
 Builder.Services.AddHostedService<BlockExcavator>();
 
 await Builder.Build().RunAsync();
 ```
+
+### Options reference
+
+| Property                            | Default                       | Effect                                                              |
+|-------------------------------------|-------------------------------|---------------------------------------------------------------------|
+| `TransformerQueueCapacity`          | `100`                         | Bound on the Extractor → Transformer channel.                       |
+| `LoaderQueueCapacity`               | `100`                         | Bound on the Transformer → Loader channel.                          |
+| `TransformerMaxDegreeOfParallelism` | `Environment.ProcessorCount`  | Parallel partitions reading from `TransformerQueue`.                |
+| `LoaderMaxDegreeOfParallelism`      | `Environment.ProcessorCount`  | Parallel partitions reading from `LoaderQueue`.                     |
+| `ReporterInterval`                  | `00:01:00`                    | Tick interval for the queue-depth Reporter log line.                |
 
 ## How it works
 
