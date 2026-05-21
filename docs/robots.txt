@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://excavator.texnomic.com/sitemap.xml

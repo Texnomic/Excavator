@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texnomic.Excavator — High-Throughput ETL Host for .NET 10</title>
+    <meta name="description" content="A .NET 10 ETL host scaffolding for high-throughput data pipelines. Excavator wires Extract → Transform → Load stages over bounded Channels with parallel workers, structured Serilog logging, and IHostedService lifecycle.">
+    <meta name="theme-color" content="#050510">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Texnomic.Excavator">
+    <meta property="og:description" content="High-throughput ETL host scaffolding for .NET 10. Extract → Transform → Load over bounded Channels with parallel workers and Serilog.">
+    <meta property="og:url" content="https://excavator.texnomic.com/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Texnomic.Excavator">
+    <meta name="twitter:description" content="High-throughput ETL host scaffolding for .NET 10.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow--1" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow--2" aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav__container">
+            <a href="#" class="nav__logo">
+                <svg class="nav__logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"/>
+                    <path d="M5 21V10l7-5 7 5v11"/>
+                    <path d="M9 21v-6h6v6"/>
+                </svg>
+                <span class="nav__logo-text">Texnomic<span class="nav__logo-accent">.Excavator</span></span>
+            </a>
+            <div class="nav__links">
+                <a href="#features" class="nav__link">Features</a>
+                <a href="#pipeline" class="nav__link">Pipeline</a>
+                <a href="#quickstart" class="nav__link">Quick Start</a>
+                <a href="#how-it-works" class="nav__link">How It Works</a>
+                <a href="#packages" class="nav__link">Packages</a>
+                <a href="https://github.com/texnomic/Excavator" class="nav__cta" target="_blank" rel="noopener">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub
+                </a>
+            </div>
+            <button class="nav__mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#features" class="mobile-menu__link">Features</a>
+        <a href="#pipeline" class="mobile-menu__link">Pipeline</a>
+        <a href="#quickstart" class="mobile-menu__link">Quick Start</a>
+        <a href="#how-it-works" class="mobile-menu__link">How It Works</a>
+        <a href="#packages" class="mobile-menu__link">Packages</a>
+        <a href="https://github.com/texnomic/Excavator" class="mobile-menu__link" target="_blank" rel="noopener">GitHub</a>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero__container hero__container--stacked">
+            <div class="hero__content hero__content--centered">
+                <div class="hero__badge">
+                    <span class="hero__badge-dot"></span>
+                    Open-Source · .NET 10
+                </div>
+                <h1 class="hero__title">
+                    Texnomic<span class="hero__title-accent">.Excavator</span>
+                </h1>
+                <p class="hero__subtitle">
+                    A <strong>.NET 10</strong> ETL host scaffolding for high-throughput data pipelines. <code class="inline-code">Excavator</code> wires <strong>Extract → Transform → Load</strong> stages over bounded Channels with parallel workers, structured Serilog logging, and <code class="inline-code">IHostedService</code> lifecycle.
+                </p>
+                <div class="hero__actions">
+                    <a href="#quickstart" class="btn btn--primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+                        Get Started
+                    </a>
+                    <a href="https://github.com/texnomic/Excavator" class="btn btn--ghost" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        View Source
+                    </a>
+                </div>
+                <div class="hero__stats">
+                    <div class="hero__stat">
+                        <img src="https://img.shields.io/nuget/v/Texnomic.Excavator?style=flat&color=00d4ff&labelColor=0a0a1a&logo=nuget" alt="NuGet">
+                    </div>
+                    <div class="hero__stat">
+                        <img src="https://img.shields.io/nuget/dt/Texnomic.Excavator?style=flat&color=00d4ff&labelColor=0a0a1a&logo=nuget" alt="Downloads">
+                    </div>
+                    <div class="hero__stat">
+                        <img src="https://img.shields.io/github/stars/texnomic/Excavator?style=flat&color=00d4ff&labelColor=0a0a1a&logo=github" alt="GitHub Stars">
+                    </div>
+                    <div class="hero__stat">
+                        <img src="https://img.shields.io/github/license/texnomic/Excavator?style=flat&color=00d4ff&labelColor=0a0a1a" alt="License">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code preview card -->
+            <div class="hero__code">
+                <div class="hero__code-glow" aria-hidden="true"></div>
+                <div class="hero__code-window">
+                    <div class="hero__code-titlebar">
+                        <span class="hero__code-dot hero__code-dot--red"></span>
+                        <span class="hero__code-dot hero__code-dot--amber"></span>
+                        <span class="hero__code-dot hero__code-dot--green"></span>
+                        <span class="hero__code-filename">BlockExcavator.cs</span>
+                    </div>
+<pre class="hero__code-body"><code><span class="tok-k">using</span> <span class="tok-n">Texnomic.Excavator</span>;
+
+<span class="tok-k">public sealed class</span> <span class="tok-t">BlockExcavator</span>(<span class="tok-t">ILogger</span> <span class="tok-v">Logger</span>)
+    : <span class="tok-t">Excavator</span>&lt;<span class="tok-t">RawBlock</span>, <span class="tok-t">NormalizedBlock</span>&gt;(<span class="tok-s">"Blocks"</span>, <span class="tok-v">Logger</span>)
+{
+    <span class="tok-k">protected override async</span> <span class="tok-t">ValueTask</span> <span class="tok-m">ExtractorCore</span>(<span class="tok-t">CancellationToken</span> <span class="tok-v">Token</span>)
+    {
+        <span class="tok-k">var</span> <span class="tok-v">Raw</span> = <span class="tok-k">await</span> <span class="tok-v">Source</span>.<span class="tok-m">NextBlockAsync</span>(<span class="tok-v">Token</span>);
+        <span class="tok-k">await</span> <span class="tok-v">TransformerQueue</span>.<span class="tok-v">Writer</span>.<span class="tok-m">WriteAsync</span>(<span class="tok-v">Raw</span>, <span class="tok-v">Token</span>);
+    }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="hero__scroll">
+            <span>Scroll to explore</span>
+            <div class="hero__scroll-line"></div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="section__container">
+            <div class="section__header">
+                <span class="section__label">Features</span>
+                <h2 class="section__title">Built for <span class="text-gradient">Throughput</span>.<br>Shaped like <code class="inline-code">IHostedService</code>.</h2>
+                <p class="section__description">A pre-wired ETL skeleton — Extract, Transform, Load, Report — running over bounded Channels with parallel workers, all behind a familiar .NET hosted-service surface.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v4H4zM4 14h16v4H4z"/><path d="M8 8v6"/><path d="M16 8v6"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Bounded Channels</h3>
+                    <p class="feature-card__desc">Two <code class="inline-code">Channel.CreateBounded</code> queues between stages give you backpressure for free — fast producers never overwhelm slow consumers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Parallel Workers</h3>
+                    <p class="feature-card__desc">Transform and Load stages run through <code class="inline-code">Parallel.ForEachAsync</code> with <code class="inline-code">MaxDegreeOfParallelism = Environment.ProcessorCount</code>.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Cooperative Cancellation</h3>
+                    <p class="feature-card__desc">Every stage reads a single <code class="inline-code">CancellationToken</code>. <code class="inline-code">StopAsync</code> cancels, completes writers, then awaits every worker — partial batches drain cleanly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16V9"/><path d="M12 16V6"/><path d="M16 16v-5"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Built-in Reporter</h3>
+                    <p class="feature-card__desc">A 1-minute tick logs queue depths for both stages so you can spot a backed-up pipeline without bolting on metrics infrastructure.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Structured Serilog Logs</h3>
+                    <p class="feature-card__desc">Every stage transition logs through <code class="inline-code">[{System}] [{Function}]</code> templates. Property-aware sinks (Seq, ELK, Loki) parse out of the box.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <h3 class="feature-card__title">Modern .NET 10 + C# Latest</h3>
+                    <p class="feature-card__desc">Primary constructors, file-scoped namespaces, nullable-enabled, <code class="inline-code">TreatWarningsAsErrors</code>, deterministic builds, SourceLink + symbol packages.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pipeline Section -->
+    <section class="section section--dark" id="pipeline">
+        <div class="section__container">
+            <div class="section__header">
+                <span class="section__label">Pipeline Stages</span>
+                <h2 class="section__title">Four Workers.<br><span class="text-gradient">One Lifecycle.</span></h2>
+                <p class="section__description">Subclass <code class="inline-code">Excavator&lt;TTransformer, TLoader&gt;</code> and implement four <code class="inline-code">*Core</code> hooks. The base class runs the loops, owns the channels, and handles cancellation.</p>
+            </div>
+            <div class="protocols-grid">
+                <div class="protocol-card protocol-card--active">
+                    <div class="protocol-card__status protocol-card__status--done">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="protocol-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <h3 class="protocol-card__title">Initializer</h3>
+                    <p class="protocol-card__desc">One-shot warm-up. Open connections, prime caches, validate configuration — runs once before any worker starts.</p>
+                </div>
+                <div class="protocol-card protocol-card--active">
+                    <div class="protocol-card__status protocol-card__status--done">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="protocol-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v6H4z"/><path d="M4 14h10v6H4z"/></svg>
+                    </div>
+                    <h3 class="protocol-card__title">Extractor</h3>
+                    <p class="protocol-card__desc">Single producer loop. Pulls work from upstream and writes onto <code class="inline-code">TransformerQueue</code>. Backpressure blocks the loop when the queue is full.</p>
+                </div>
+                <div class="protocol-card protocol-card--active">
+                    <div class="protocol-card__status protocol-card__status--done">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="protocol-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h4l3 9 4-18 3 9h4"/></svg>
+                    </div>
+                    <h3 class="protocol-card__title">Transformer</h3>
+                    <p class="protocol-card__desc">N parallel workers (one per logical core). Reads from <code class="inline-code">TransformerQueue</code>, writes to <code class="inline-code">LoaderQueue</code>.</p>
+                </div>
+                <div class="protocol-card protocol-card--active">
+                    <div class="protocol-card__status protocol-card__status--done">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="protocol-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </div>
+                    <h3 class="protocol-card__title">Loader</h3>
+                    <p class="protocol-card__desc">N parallel workers drain <code class="inline-code">LoaderQueue</code> into your sink — database, object store, message bus, anywhere.</p>
+                </div>
+                <div class="protocol-card protocol-card--active">
+                    <div class="protocol-card__status protocol-card__status--done">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="protocol-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16V9"/><path d="M12 16V6"/><path d="M16 16v-5"/></svg>
+                    </div>
+                    <h3 class="protocol-card__title">Reporter</h3>
+                    <p class="protocol-card__desc">Ticks every minute. Logs <code class="inline-code">Transformer</code> and <code class="inline-code">Loader</code> queue depths so you can see bottlenecks in real time.</p>
+                </div>
+                <div class="protocol-card protocol-card--active">
+                    <div class="protocol-card__status protocol-card__status--done">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="protocol-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <h3 class="protocol-card__title">Fail-Stop Safety</h3>
+                    <p class="protocol-card__desc">Any unhandled exception inside a worker logs <code class="inline-code">Fatal</code> and triggers <code class="inline-code">StopAsync</code>. No zombie state.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="section" id="quickstart">
+        <div class="section__container">
+            <div class="section__header">
+                <span class="section__label">Quick Start</span>
+                <h2 class="section__title">From <span class="text-gradient">install</span> to <span class="text-gradient">running pipeline</span>.</h2>
+                <p class="section__description">Install the package, subclass <code class="inline-code">Excavator</code>, register as a hosted service. The rest of the lifecycle is done.</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step__index">01</div>
+                    <div class="step__body">
+                        <h3 class="step__title">Install the package</h3>
+                        <p class="step__desc">A single NuGet package. Pulls Microsoft.Extensions.Hosting.Abstractions and Serilog as transitive dependencies.</p>
+                        <div class="code-window">
+                            <div class="code-window__tabs">
+                                <span class="code-window__tab code-window__tab--active">dotnet</span>
+                                <span class="code-window__tab">PackageReference</span>
+                            </div>
+<pre class="code-window__body"><code><span class="tok-c">$</span> dotnet add package <span class="tok-s">Texnomic.Excavator</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step__index">02</div>
+                    <div class="step__body">
+                        <h3 class="step__title">Subclass Excavator</h3>
+                        <p class="step__desc">Override the four <code class="inline-code">*Core</code> hooks. The base class owns the queues, the workers, and the lifecycle.</p>
+                        <div class="code-window">
+                            <div class="code-window__tabs">
+                                <span class="code-window__tab code-window__tab--active">C#</span>
+                            </div>
+<pre class="code-window__body"><code><span class="tok-k">using</span> <span class="tok-n">Texnomic.Excavator</span>;
+
+<span class="tok-k">public sealed class</span> <span class="tok-t">BlockExcavator</span>(<span class="tok-t">ILogger</span> <span class="tok-v">Logger</span>)
+    : <span class="tok-t">Excavator</span>&lt;<span class="tok-t">RawBlock</span>, <span class="tok-t">NormalizedBlock</span>&gt;(<span class="tok-s">"Blocks"</span>, <span class="tok-v">Logger</span>)
+{
+    <span class="tok-k">protected override</span> <span class="tok-t">ValueTask</span> <span class="tok-m">InitializerCore</span>(<span class="tok-t">CancellationToken</span> <span class="tok-v">Token</span>)
+        =&gt; <span class="tok-t">ValueTask</span>.<span class="tok-v">CompletedTask</span>;
+
+    <span class="tok-k">protected override async</span> <span class="tok-t">ValueTask</span> <span class="tok-m">ExtractorCore</span>(<span class="tok-t">CancellationToken</span> <span class="tok-v">Token</span>)
+    {
+        <span class="tok-k">var</span> <span class="tok-v">Raw</span> = <span class="tok-k">await</span> <span class="tok-v">Source</span>.<span class="tok-m">NextBlockAsync</span>(<span class="tok-v">Token</span>);
+        <span class="tok-k">await</span> <span class="tok-v">TransformerQueue</span>.<span class="tok-v">Writer</span>.<span class="tok-m">WriteAsync</span>(<span class="tok-v">Raw</span>, <span class="tok-v">Token</span>);
+    }
+
+    <span class="tok-k">protected override async</span> <span class="tok-t">ValueTask</span> <span class="tok-m">TransformerCore</span>(<span class="tok-t">RawBlock</span> <span class="tok-v">Context</span>, <span class="tok-t">CancellationToken</span> <span class="tok-v">Token</span>)
+    {
+        <span class="tok-k">var</span> <span class="tok-v">Normalized</span> = <span class="tok-m">Normalize</span>(<span class="tok-v">Context</span>);
+        <span class="tok-k">await</span> <span class="tok-v">LoaderQueue</span>.<span class="tok-v">Writer</span>.<span class="tok-m">WriteAsync</span>(<span class="tok-v">Normalized</span>, <span class="tok-v">Token</span>);
+    }
+
+    <span class="tok-k">protected override async</span> <span class="tok-t">ValueTask</span> <span class="tok-m">LoaderCore</span>(<span class="tok-t">NormalizedBlock</span> <span class="tok-v">Context</span>, <span class="tok-t">CancellationToken</span> <span class="tok-v">Token</span>)
+        =&gt; <span class="tok-k">await</span> <span class="tok-v">Sink</span>.<span class="tok-m">InsertAsync</span>(<span class="tok-v">Context</span>, <span class="tok-v">Token</span>);
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step__index">03</div>
+                    <div class="step__body">
+                        <h3 class="step__title">Register as a hosted service</h3>
+                        <p class="step__desc">Add it to the .NET generic host. <code class="inline-code">RunAsync</code> handles SIGINT, draining, and graceful shutdown.</p>
+                        <div class="code-window">
+                            <div class="code-window__tabs">
+                                <span class="code-window__tab code-window__tab--active">Program.cs</span>
+                            </div>
+<pre class="code-window__body"><code><span class="tok-k">var</span> <span class="tok-v">Builder</span> = <span class="tok-t">Host</span>.<span class="tok-m">CreateApplicationBuilder</span>(<span class="tok-v">args</span>);
+
+<span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddSerilog</span>((<span class="tok-v">Services</span>, <span class="tok-v">Configuration</span>) =&gt; <span class="tok-v">Configuration</span>
+    .<span class="tok-v">ReadFrom</span>.<span class="tok-m">Configuration</span>(<span class="tok-v">Builder</span>.<span class="tok-v">Configuration</span>)
+    .<span class="tok-v">Enrich</span>.<span class="tok-m">FromLogContext</span>());
+
+<span class="tok-v">Builder</span>.<span class="tok-v">Services</span>.<span class="tok-m">AddHostedService</span>&lt;<span class="tok-t">BlockExcavator</span>&gt;();
+
+<span class="tok-k">await</span> <span class="tok-v">Builder</span>.<span class="tok-m">Build</span>().<span class="tok-m">RunAsync</span>();</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section section--dark" id="how-it-works">
+        <div class="section__container">
+            <div class="section__header">
+                <span class="section__label">How It Works</span>
+                <h2 class="section__title">Four Stages of <span class="text-gradient">Streaming Throughput</span></h2>
+                <p class="section__description">A producer-consumer pipeline glued together with two bounded Channels. Backpressure is automatic. Cancellation is cooperative. Logging is structured.</p>
+            </div>
+            <div class="arch-diagram">
+                <div class="arch-layer arch-layer--1">
+                    <div class="arch-layer__label">Stage 1 · Extract</div>
+                    <div class="arch-layer__items">
+                        <span class="arch-tag">single loop</span>
+                        <span class="arch-tag">awaits ExtractorCore</span>
+                        <span class="arch-tag">writes TransformerQueue</span>
+                        <span class="arch-tag">backpressure-aware</span>
+                    </div>
+                </div>
+                <div class="arch-connector">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                </div>
+                <div class="arch-layer arch-layer--2">
+                    <div class="arch-layer__label">Stage 2 · Transform</div>
+                    <div class="arch-layer__items">
+                        <span class="arch-tag">Parallel.ForEachAsync</span>
+                        <span class="arch-tag">N = ProcessorCount</span>
+                        <span class="arch-tag">reads TransformerQueue</span>
+                        <span class="arch-tag">writes LoaderQueue</span>
+                    </div>
+                </div>
+                <div class="arch-connector">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                </div>
+                <div class="arch-layer arch-layer--3">
+                    <div class="arch-layer__label">Stage 3 · Load</div>
+                    <div class="arch-layer__items">
+                        <span class="arch-tag">Parallel.ForEachAsync</span>
+                        <span class="arch-tag">N = ProcessorCount</span>
+                        <span class="arch-tag">drains LoaderQueue</span>
+                        <span class="arch-tag">writes to sink</span>
+                    </div>
+                </div>
+                <div class="arch-connector">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                </div>
+                <div class="arch-layer arch-layer--4">
+                    <div class="arch-layer__label">Observe · Report</div>
+                    <div class="arch-layer__items">
+                        <span class="arch-tag">1-minute tick</span>
+                        <span class="arch-tag">queue depths</span>
+                        <span class="arch-tag">Serilog structured</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="section" id="use-cases">
+        <div class="section__container">
+            <div class="section__header">
+                <span class="section__label">Use Cases</span>
+                <h2 class="section__title">When You Have a <span class="text-gradient">Firehose</span>.</h2>
+                <p class="section__description">Anywhere data has to come in, get reshaped, and land somewhere else — Excavator gives you the lifecycle, the backpressure, and the parallelism for free.</p>
+            </div>
+            <div class="platforms-showcase">
+                <div class="platforms-row">
+                    <div class="platform-item">
+                        <div class="platform-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l18 18"/><path d="M21 12a9 9 0 11-9-9"/><path d="M12 7v5l3 3"/></svg>
+                        </div>
+                        <span class="platform-item__name">Blockchain Indexers</span>
+                        <span class="platform-item__detail">Block → normalize → store</span>
+                    </div>
+                    <div class="platform-item">
+                        <div class="platform-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0018 0V5"/><path d="M3 12a9 3 0 0018 0"/></svg>
+                        </div>
+                        <span class="platform-item__name">Database Migrations</span>
+                        <span class="platform-item__detail">Source → transform → target</span>
+                    </div>
+                    <div class="platform-item">
+                        <div class="platform-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        </div>
+                        <span class="platform-item__name">Stream Processors</span>
+                        <span class="platform-item__detail">Kafka / message bus consumers</span>
+                    </div>
+                    <div class="platform-item">
+                        <div class="platform-item__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                        </div>
+                        <span class="platform-item__name">Web Scrapers</span>
+                        <span class="platform-item__detail">URLs → parse → persist</span>
+                    </div>
+                </div>
+                <div class="platforms-arch">
+                    <h3 class="platforms-arch__title">What you bring</h3>
+                    <div class="platforms-arch__grid">
+                        <div class="arch-chip"><span class="arch-chip__icon">●</span> Data source</div>
+                        <div class="arch-chip"><span class="arch-chip__icon">●</span> Transform logic</div>
+                        <div class="arch-chip"><span class="arch-chip__icon">●</span> Sink writer</div>
+                        <div class="arch-chip"><span class="arch-chip__icon">●</span> ILogger</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NuGet Packages Section -->
+    <section class="section section--dark" id="packages">
+        <div class="section__container">
+            <div class="section__header">
+                <span class="section__label">Packages</span>
+                <h2 class="section__title">Available on <span class="text-gradient">NuGet</span></h2>
+                <p class="section__description">A single package. No platform-specific natives. Restores in seconds.</p>
+            </div>
+            <div class="packages-grid">
+                <a class="package-card" href="https://www.nuget.org/packages/Texnomic.Excavator" target="_blank" rel="noopener">
+                    <div class="package-card__name">Texnomic.Excavator</div>
+                    <img src="https://img.shields.io/nuget/v/Texnomic.Excavator?style=flat&color=00d4ff&labelColor=0a0a1a&logo=nuget" alt="NuGet" loading="lazy">
+                </a>
+                <a class="package-card" href="https://www.nuget.org/profiles/Texnomic" target="_blank" rel="noopener">
+                    <div class="package-card__name">All Texnomic packages</div>
+                    <span class="package-badge">Browse</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section section--cta">
+        <div class="section__container">
+            <div class="cta">
+                <div class="cta__glow" aria-hidden="true"></div>
+                <h2 class="cta__title">Ready to move a lot of data?</h2>
+                <p class="cta__desc">Install the package, subclass <code class="inline-code">Excavator</code>, register as a hosted service. The pipeline runs itself.</p>
+                <div class="cta__actions">
+                    <a href="https://www.nuget.org/packages/Texnomic.Excavator" class="btn btn--primary btn--lg" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Install from NuGet
+                    </a>
+                    <a href="https://github.com/texnomic/Excavator#readme" class="btn btn--ghost btn--lg" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+                        Read the Docs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer__container">
+            <div class="footer__top">
+                <div class="footer__brand">
+                    <div class="footer__logo">
+                        <svg class="footer__logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 21h18"/>
+                            <path d="M5 21V10l7-5 7 5v11"/>
+                            <path d="M9 21v-6h6v6"/>
+                        </svg>
+                        <span class="footer__logo-text">Texnomic<span class="footer__logo-accent">.Excavator</span></span>
+                    </div>
+                    <p class="footer__tagline">High-throughput ETL host scaffolding for .NET 10.</p>
+                </div>
+                <div class="footer__links">
+                    <div class="footer__col">
+                        <h4 class="footer__col-title">Project</h4>
+                        <a href="https://github.com/texnomic/Excavator" target="_blank" rel="noopener">GitHub</a>
+                        <a href="https://github.com/texnomic/Excavator/releases" target="_blank" rel="noopener">Releases</a>
+                        <a href="https://github.com/texnomic/Excavator/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+                        <a href="https://github.com/texnomic/Excavator#readme" target="_blank" rel="noopener">Documentation</a>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__col-title">Packages</h4>
+                        <a href="https://www.nuget.org/packages/Texnomic.Excavator" target="_blank" rel="noopener">Texnomic.Excavator</a>
+                        <a href="https://www.nuget.org/profiles/Texnomic" target="_blank" rel="noopener">All Texnomic packages</a>
+                    </div>
+                    <div class="footer__col">
+                        <h4 class="footer__col-title">Resources</h4>
+                        <a href="https://learn.microsoft.com/dotnet/core/extensions/channels" target="_blank" rel="noopener">System.Threading.Channels</a>
+                        <a href="https://serilog.net/" target="_blank" rel="noopener">Serilog</a>
+                        <a href="https://learn.microsoft.com/dotnet/core/extensions/generic-host" target="_blank" rel="noopener">.NET Generic Host</a>
+                        <a href="https://github.com/texnomic/Excavator/issues" target="_blank" rel="noopener">Report an Issue</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p class="footer__copyright">&copy; 2026 Texnomic. Released under the MIT License.</p>
+                <div class="footer__meta">
+                    <span>Built for high-throughput .NET 10 pipelines.</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
